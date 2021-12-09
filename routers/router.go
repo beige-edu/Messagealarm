@@ -94,5 +94,4 @@ func init() {
 
 	// toeken access test
 	beego.Router("/token/out", &controllers.TokenAuthController{}, "get:GetToken")
-	beego.Router("/token/genernal", &controllers.TokenAuthController{}, "get:GenernelToken")
 }

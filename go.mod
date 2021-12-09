@@ -6,6 +6,7 @@ require (
 	github.com/aliyun/alibaba-cloud-sdk-go v1.61.641
 	github.com/astaxie/beego v1.12.1
 	github.com/baidubce/bce-sdk-go v0.9.32
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/go-gomail/gomail v0.0.0-20160411212932-81ebce5c23df
 	github.com/go-sql-driver/mysql v1.4.1
 	github.com/go-telegram-bot-api/telegram-bot-api/v5 v5.0.0-rc1.0.20201106042948-366879b11047
@@ -19,13 +20,11 @@ require (
 require (
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
-	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/golang/protobuf v1.4.3 // indirect
 	github.com/gopherjs/gopherjs v0.0.0-20181017120253-0766667cb4d1 // indirect
 	github.com/jmespath/go-jmespath v0.0.0-20180206201540-c2b33e8439af // indirect
 	github.com/json-iterator/go v1.1.10 // indirect
 	github.com/jtolds/gls v4.20.0+incompatible // indirect
-	github.com/juusechec/jwt-beego v0.0.0-20180206200454-c8c7c4585066 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.1 // indirect
