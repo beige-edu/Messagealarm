@@ -1,4 +1,4 @@
-name: WiblogCI
+name: MessagealarmCI
 
 on:
   push:
@@ -52,4 +52,4 @@ jobs:
       - name: Build image
         env:
           GOPROXY: https://goproxy.io,direct
-        run: scripts/run_build.sh beige-edu ${{ steps.vars.outputs.tag }}
+        run: scripts/run_build.sh iwuxc ${{ steps.vars.outputs.tag }}
