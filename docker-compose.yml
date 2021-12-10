@@ -1,0 +1,41 @@
+version: '3'
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: mysql-5.7
+    privileged: true
+    restart: always
+    ports:
+      - "3306:3306"
+    networks:
+      - default
+    environment:
+      MYSQL_ROOT_PASSWORD: "wuxiaochen0304"
+      MYSQL_USER: "wuxc"
+      MYSQL_PASS: "wuxiaochen0304"
+      TZ: Asia/Shanghai
+    command:
+      --wait_timeout=31536000
+      --interactive_timeout=31536000
+      --max_connections=1000
+      --default-authentication-plugin=mysql_native_password
+    volumes:
+      #映射mysql的数据目录到宿主机，保存数据
+      - "/app/messagealarm/data/mysql:/var/lib/mysql/:rw"
+      - "/app/messagealarm/services/mysql/mysql.cnf:/etc/mysql/conf.d/mysql.cnf:ro"
+
+  messagealarm:
+    image: iwuxc/messagealarm:latest
+    container_name: messagealarm
+    restart: always
+    ports:
+      - "13013:8080"
+    networks:
+      - default
+    volumes:
+      - "/app/messagealarm/services/messagealarm/views:/app/views:rw"
+      - "/app/messagealarm/services/messagealarm/static:/app/static:rw"
+      - "/app/messagealarm/services/messagealarm/logs:/app/logs:rw"
+      - "/app/messagealarm/services/messagealarm/conf:/app/conf:ro"
+networks:
+  default:
