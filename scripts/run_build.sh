@@ -2,7 +2,7 @@
 
 _registry="$1"
 _tag="$2"
-_img="$3"
+_image="$3"
 _platform="linux/amd64,linux/arm64,linux/386"
 
 if [ -z "$_registry" ] || [ -z "$_tag" ] || [ -z "$_img" ]; then
@@ -24,8 +24,8 @@ CGO_ENABLED=0 go build -o ./bin/PrometheusAlert main.go
 # docker image
 docker buildx build --platform "$_platform" \
   -f "build/Dockerfile" \
-  -t "docker.webtest.51beige.com/crm-warning-backend:latest" \
-  --push .
+  -t "$_registry/$_image:latest" \
+  .
 
 # clean dir bin
-rm -rf ./PrometheusAlert
+# rm -rf ./PrometheusAlert
