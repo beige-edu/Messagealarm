@@ -17,8 +17,7 @@ CGO_ENABLED=0 GOOS=linux GOARCH=arm64 go build -o ./bin/PrometheusAlert main.go
 
 
 # build and push docker image
-docker build -f "build/Dockerfile" \
-  -t "$_image:latest"
+docker build -t "$_image:latest" -f "build/Dockerfile" .
 
 docker push "$_repository/$_image:latest"
 
