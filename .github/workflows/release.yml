@@ -51,3 +51,6 @@ jobs:
         env:
           GOPROXY: https://goproxy.io,direct
         run: scripts/run_build.sh ${REG_HOST} ${{ steps.vars.outputs.tag }} ${IMAGE_NAME}
+
+      - name: docker push
+        run: docker push ${REG_HOST}/${IMAGE_NAME}:latest
