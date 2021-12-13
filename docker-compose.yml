@@ -10,9 +10,9 @@ services:
     networks:
       - default
     environment:
-      MYSQL_ROOT_PASSWORD: "wuxiaochen0304"
-      MYSQL_USER: "wuxc"
-      MYSQL_PASS: "wuxiaochen0304"
+      MYSQL_ROOT_PASSWORD: "123456"
+      MYSQL_USER: "messagealarm"
+      MYSQL_PASS: "123456"
       TZ: Asia/Shanghai
     command:
       --wait_timeout=31536000
