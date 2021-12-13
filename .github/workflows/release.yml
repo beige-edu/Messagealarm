@@ -53,4 +53,4 @@ jobs:
       - name: Build image
         env:
           GOPROXY: https://goproxy.io,direct
-        run: scripts/run_build.sh docker.webtest.51beige.com ${{ steps.vars.outputs.tag }} crm-warning-backend
+        run: scripts/run_build.sh ${REG_HOST} ${{ steps.vars.outputs.tag }} ${IMAGE_NAME}

@@ -20,6 +20,7 @@ fi
 mkdir -p ./bin
 # build demo app
 CGO_ENABLED=0 go build -o ./bin/PrometheusAlert main.go
+
 # docker image
 docker buildx build --platform "$_platform" \
   -f "build/Dockerfile" \
