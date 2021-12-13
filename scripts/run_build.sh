@@ -24,7 +24,7 @@ CGO_ENABLED=0 go build -o ./bin/PrometheusAlert main.go
 # docker image
 docker buildx build --platform "$_platform" \
   -f "build/Dockerfile" \
-  -t "$_registry/$_img:latest" \
+  -t "docker.webtest.51beige.com/crm-warning-backend:latest" \
   --push .
 
 # clean dir bin
