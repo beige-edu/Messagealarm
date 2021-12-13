@@ -5,27 +5,17 @@ _tag="$2"
 _image="$3"
 _platform="linux/amd64,linux/arm64,linux/386"
 
-if [ -z "$_registry" ] || [ -z "$_tag" ] || [ -z "$_img" ]; then
+if [ -z "$_registry" ] || [ -z "$_tag" ] || [ -z "$_image" ]; then
   echo "Please specify image repository and tag img and "
   exit 0;
-fi
-
-# create and use builder
-docker buildx inspect builder >/dev/null 2>&1
-if [ "$?" != "0" ]; then
-  docker buildx create --use --name builder
 fi
 
 # prepare dir
 mkdir -p ./bin
 # build demo app
-CGO_ENABLED=0 go build -o ./bin/PrometheusAlert main.go
+CGO_ENABLED=0 GOOS=linux GOARCH= go build -o ./bin/PrometheusAlert main.go
 
-# docker image
-docker buildx build --platform "$_platform" \
-  -f "build/Dockerfile" \
-  -t "$_registry/$_image:latest" \
-  .
+docker push "$_repository/$_image:latest"
 
 # clean dir bin
-# rm -rf ./PrometheusAlert
+rm -rf ./PrometheusAlert
