@@ -93,5 +93,5 @@ func init() {
 	beego.Router("/prometheusalert", &controllers.PrometheusAlertController{}, "get,post:PrometheusAlert")
 
 	// toeken access test
-	beego.Router("/token/out", &controllers.TokenAuthController{}, "get:GetToken")
+	beego.Router("/v1/authz", &controllers.TokenAuthController{}, "post:GetToken")
 }

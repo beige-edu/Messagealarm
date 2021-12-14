@@ -21,40 +21,44 @@ type response struct {
 // GetToken 发放token
 func (c *TokenAuthController) GetToken() {
 	appKey := c.GetString("app_key")
-	if appKey == "" {
+	appSecret := c.GetString("app_secret")
+
+	if appKey == "" || appSecret == "" {
 		c.Data["json"] = response{
 			Code: 400,
-			Msg: "签名错误",
+			Msg:  "签名错误",
 		}
 		c.ServeJSON()
 		return
 	}
 
 	//获取用户
-	user, err := models.GetUserByAppKey(appKey)
+	user, err := models.GetUserByAppKey(appKey, appSecret)
 	if err != nil || user == nil {
 		c.Data["json"] = response{
 			Code: 400,
-			Msg: "用户未找到",
+			Msg:  "用户未找到",
 		}
 		c.ServeJSON()
 		return
 	}
 	logs.Info("用户信息获取成功, 用户名: " + user.Name)
 
+	expire := time.Now().Unix() + 3600*24*7
 	tokenString := ""
 	et := beegojwt.EasyToken{
 		Username: user.AppKey + "_" + user.Name,
-		Expires:  time.Now().Unix() + 3600 * 24 * 7, //Segundos
+		Expires:  expire, //Segundos
 	}
 	tokenString, _ = et.GetToken()
 
-	data := make(map[string]string)
+	data := make(map[string]interface{})
 	data["name"] = user.Name
 	data["token"] = tokenString
+	data["expire"] = expire
 	c.Data["json"] = response{
 		Code: 200,
-		Msg: "请求成功",
+		Msg:  "请求成功",
 		Data: data,
 	}
 	c.ServeJSON()

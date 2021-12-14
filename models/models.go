@@ -160,11 +160,11 @@ type User struct {
 }
 
 // GetUserByAppKey 通过appkey获取第三方用户
-func GetUserByAppKey(appkey string) (*User, error) {
+func GetUserByAppKey(appkey, appSecret string) (*User, error) {
 	o := orm.NewOrm()
 	user := new(User)
 	qs := o.QueryTable("User")
-	err := qs.Filter("app_key", appkey).One(user)
+	err := qs.Filter("app_key", appkey).Filter("app_secret", appSecret).One(user)
 	if err != nil {
 		return nil, err
 	}
