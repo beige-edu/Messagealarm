@@ -4,3 +4,4 @@ PrometheusAlert.exe
 logo
 .idea
 logs/*.log
+.DS_Store
