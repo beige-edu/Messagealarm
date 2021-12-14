@@ -2,8 +2,9 @@ package controllers
 
 import (
 	"PrometheusAlert/controllers/auth"
-	"PrometheusAlert/model"
 	"PrometheusAlert/models"
+	"PrometheusAlert/pkg/service"
+	beegojwt "PrometheusAlert/pkg/util"
 	"bytes"
 	"encoding/json"
 	"github.com/astaxie/beego"
@@ -59,7 +60,7 @@ func (c *PrometheusAlertController) PrometheusAlert() {
 	var p_json interface{}
 	logs.Debug(logsign, strings.Replace(string(c.Ctx.Input.RequestBody), "\n", "", -1))
 	if c.Input().Get("from") == "aliyun" {
-		//阿里云云监控告警消息处理
+		//阿里云云监控预警消息处理
 		AliyunAlertJson := AliyunAlert{}
 		AliyunAlertJson.Expression = c.Input().Get("expression")
 		AliyunAlertJson.MetricName = c.Input().Get("metricName")
@@ -120,7 +121,7 @@ func (c *PrometheusAlertController) PrometheusAlert() {
 		P_groupid = beego.AppConfig.String("BDRL_ID")
 	}
 	P_atsomeone := c.Input().Get("at")
-	P_rr:=c.Input().Get("rr")
+	P_rr := c.Input().Get("rr")
 	//get tpl
 	message := ""
 	funcMap := template.FuncMap{
@@ -141,7 +142,7 @@ func (c *PrometheusAlertController) PrometheusAlert() {
 			message = err.Error()
 		} else {
 			tpl.Execute(buf, p_json)
-			message = SendMessagePrometheusAlert(buf.String(), P_type, P_ddurl, P_wxurl, P_fsurl, P_webhookurl, P_phone, P_email, P_touser, P_toparty, P_totag, P_groupid, P_atsomeone,P_rr,logsign)
+			message = SendMessagePrometheusAlert(c, buf.String(), P_type, P_ddurl, P_wxurl, P_fsurl, P_webhookurl, P_phone, P_email, P_touser, P_toparty, P_totag, P_groupid, P_atsomeone, P_rr, logsign)
 		}
 	} else {
 		message = "接口参数缺失！"
@@ -151,15 +152,15 @@ func (c *PrometheusAlertController) PrometheusAlert() {
 	c.ServeJSON()
 }
 
-func SendMessagePrometheusAlert(message, ptype, pddurl, pwxurl, pfsurl, pwebhookurl, pphone, email, ptouser, ptoparty, ptotag, pgroupid, patsomeone,prr, logsign string) string {
+func SendMessagePrometheusAlert(c *PrometheusAlertController, message, ptype, pddurl, pwxurl, pfsurl, pwebhookurl, pphone, email, ptouser, ptoparty, ptotag, pgroupid, patsomeone, prr, logsign string) string {
 	Title := beego.AppConfig.String("title")
 	ret := ""
-	model.AlertsFromCounter.WithLabelValues("PrometheusAlert", message, "", "", "").Add(1)
+	//model.AlertsFromCounter.WithLabelValues("PrometheusAlert", message, "", "", "").Add(1)
 	switch ptype {
 	//微信渠道
 	case "wx":
 		Wxurl := strings.Split(pwxurl, ",")
-		if prr=="true" {
+		if prr == "true" {
 			ret += PostToWeiXin(message, DoBalance(Wxurl), patsomeone, logsign)
 		} else {
 			for _, url := range Wxurl {
@@ -181,18 +182,18 @@ func SendMessagePrometheusAlert(message, ptype, pddurl, pwxurl, pfsurl, pwebhook
 	//飞书渠道
 	case "fs":
 		Fsurl := strings.Split(pfsurl, ",")
-		if prr=="true" {
-			ret += PostToFS(Title+"告警消息", message, DoBalance(Fsurl), patsomeone, logsign)
+		if prr == "true" {
+			ret += PostToFS(Title+"预警消息", message, DoBalance(Fsurl), patsomeone, logsign)
 		} else {
 			for _, url := range Fsurl {
-				ret += PostToFS(Title+"告警消息", message, url, patsomeone, logsign)
+				ret += PostToFS(Title+"预警消息", message, url, patsomeone, logsign)
 			}
 		}
 
 	//Webhook渠道
 	case "webhook":
 		Fwebhookurl := strings.Split(pwebhookurl, ",")
-		if prr=="true" {
+		if prr == "true" {
 			ret += PostToWebhook(message, DoBalance(Fwebhookurl), logsign)
 		} else {
 			for _, url := range Fwebhookurl {
@@ -246,5 +247,26 @@ func SendMessagePrometheusAlert(message, ptype, pddurl, pwxurl, pfsurl, pwebhook
 	default:
 		ret = "参数错误"
 	}
+
+	//添加推送消息日志
+	CreateMessagePushLogs(c, ptype, message, ret)
+
 	return ret
+}
+
+// CreateMessagePushLogs 消息日志入库
+func CreateMessagePushLogs(c *PrometheusAlertController, sendType, message, sendResult string) {
+	appkey, name := c.jwtTokenIss()
+	_ = service.CreateMessagePushLog(appkey, name, sendType, message, sendResult)
+}
+
+// ParseIss 从token解析iss用户认证信息
+func (c *PrometheusAlertController) jwtTokenIss() (appkey, name string) {
+	tokenString := c.Ctx.Request.Header.Get("Authorization")
+	et := beegojwt.EasyToken{}
+	_, iss, _ := et.ValidateToken(tokenString)
+	issArr := strings.Split(iss, "_")
+	appkey = issArr[0]
+	name = issArr[1]
+	return
 }

@@ -53,7 +53,7 @@ func init() {
 		orm.RegisterDataBase("default", "sqlite3", Db_name, 10)
 	}
 	// 注册模型
-	orm.RegisterModel(new(models.PrometheusAlertDB), new(models.AlertRecord), new(models.User))
+	orm.RegisterModel(new(models.PrometheusAlertDB), new(models.AlertRecord), new(models.User), new(models.MessagePushLogs))
 	orm.RunSyncdb("default", false, true)
 }
 

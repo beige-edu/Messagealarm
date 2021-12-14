@@ -152,14 +152,14 @@ func AddAlertRecord(sendType string, alertname string, alertLevel string, busine
 //User 第三方授权表
 type User struct {
 	Id        int
-	AppKey    string `json:"app_key"`
-	AppSecret string `json:"app_secret"`
-	Name      string `json:"name"`
+	AppKey    string    `json:"app_key"`
+	AppSecret string    `json:"app_secret"`
+	Name      string    `json:"name"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-// GetUserByAppKey 通过appkey获取第三方用户
+// GetUserByAppKey 通过appke appSecret获取第三方用户
 func GetUserByAppKey(appkey, appSecret string) (*User, error) {
 	o := orm.NewOrm()
 	user := new(User)
@@ -169,4 +169,24 @@ func GetUserByAppKey(appkey, appSecret string) (*User, error) {
 		return nil, err
 	}
 	return user, err
+}
+
+// MessagePushLogs 消息推送日志
+type MessagePushLogs struct {
+	Id        int64     `orm:"auto"`                            //主键
+	Appkey    string  	`orm:"size(100);index" json:"appkey"`   //用户AppKey
+	SendType  string    `orm:"size(50);index" json:"send_type"` //发送类型
+	Source    string    `orm:"size(100)" json:"source"`         //发起方
+	Content   string    `orm:"type(text)" json:"content"`       //发送内容
+	Status    int8      `json:"status"`                         //发送状态
+	CreatedAt time.Time `json:"created_at"`                     //创建时间
+	UpdatedAt time.Time `json:"updated_at"`                     //更新时间
+}
+
+// InsertMessagePushLog 插入推送消息
+func InsertMessagePushLog(logs *MessagePushLogs) error {
+	var err error
+	o := orm.NewOrm()
+	_, err = o.Insert(logs)
+	return err
 }

@@ -3,12 +3,12 @@ package controllers
 import (
 	"PrometheusAlert/models"
 	"bytes"
-	"strconv"
-	"time"
-	"text/template"
+	"encoding/json"
 	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/logs"
-	"encoding/json"
+	"strconv"
+	"text/template"
+	"time"
 )
 
 //取到tpl路径
