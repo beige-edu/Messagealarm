@@ -23,6 +23,7 @@ func CreateMessagePushLog(appkey, name, sendType, message, sendResult string) er
 	default:
 	}
 	insertData := &models.MessagePushLogs{
+		Appkey: appkey,
 		SendType: sendType,
 		Source: name,
 		Content: message,

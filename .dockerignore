@@ -2,9 +2,6 @@
 .git
 doc
 example
-logo
 tests
 .gitignore
-build.sh
-build.bat
 README.MD

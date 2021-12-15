@@ -36,7 +36,7 @@ func init() {
 		orm.RegisterDataBase("default", "sqlite3", Db_name, 10)
 	case "mysql":
 		orm.RegisterDriver("mysql", orm.DRMySQL)
-		orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("db_user")+":"+beego.AppConfig.String("db_password")+"@tcp("+beego.AppConfig.String("db_host")+":"+beego.AppConfig.String("db_port")+")/"+beego.AppConfig.String("db_name")+"?charset=utf8mb4")
+		orm.RegisterDataBase("default", "mysql", beego.AppConfig.String("db_user")+":"+beego.AppConfig.String("db_password")+"@tcp("+beego.AppConfig.String("db_host")+":"+beego.AppConfig.String("db_port")+")/"+beego.AppConfig.String("db_name")+"?charset=utf8mb4&loc=Local")
 	case "postgres":
 		orm.RegisterDriver("postgres", orm.DRPostgres)
 		orm.RegisterDataBase("default", "postgres", "user="+beego.AppConfig.String("db_user")+" password="+beego.AppConfig.String("db_password")+" dbname="+beego.AppConfig.String("db_name")+" host="+beego.AppConfig.String("db_host")+" port="+beego.AppConfig.String("db_port")+" sslmode=disable")
