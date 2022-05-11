@@ -2,11 +2,32 @@ package models
 
 import (
 	"errors"
+	"github.com/astaxie/beego"
 	"github.com/astaxie/beego/orm"
+	_ "github.com/go-sql-driver/mysql"
 	"time"
 )
 
-// 分类
+func init() {
+	err := orm.RegisterDriver("mysql", orm.DRMySQL)
+	if err != nil {
+		panic("请配置数据库引擎")
+	}
+	err = orm.RegisterDataBase("default", "mysql",
+		beego.AppConfig.String("db_user")+":"+beego.AppConfig.String("db_password")+"@tcp("+beego.AppConfig.String("db_host")+":"+beego.AppConfig.String("db_port")+")/"+beego.AppConfig.String("db_name")+"?charset=utf8mb4&loc=Local")
+	if err != nil {
+		panic("数据库连接失败")
+	}
+	// 注册模型
+	orm.RegisterModel(new(PrometheusAlertDB), new(AlertRecord), new(User), new(MessagePushLogs))
+	//自动创建表 参数二为是否开启创建表   参数三是否更新表
+	err = orm.RunSyncdb("default", false, true)
+	if err != nil {
+		panic("自动创建更新表失败")
+	}
+}
+
+// PrometheusAlertDB 分类
 type PrometheusAlertDB struct {
 	Id      int
 	Tpltype string
@@ -174,7 +195,7 @@ func GetUserByAppKey(appkey, appSecret string) (*User, error) {
 // MessagePushLogs 消息推送日志
 type MessagePushLogs struct {
 	Id        int64     `orm:"auto"`                            //主键
-	Appkey    string  	`orm:"size(100);index" json:"appkey"`   //用户AppKey
+	Appkey    string    `orm:"size(100);index" json:"appkey"`   //用户AppKey
 	SendType  string    `orm:"size(50);index" json:"send_type"` //发送类型
 	Source    string    `orm:"size(100)" json:"source"`         //发起方
 	Content   string    `orm:"type(text)" json:"content"`       //发送内容
